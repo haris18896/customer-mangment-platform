@@ -68,10 +68,11 @@ def home(request):
     total_orders = orders.count()
     delivered = orders.filter(status='Delivered').count()
     pending = orders.filter(status='Pending').count()
+    out_for_delivery = orders.filter(status='out for delivery').count()
 
     context = {'orders': orders, 'customers': customers,
                'total_orders': total_orders, 'delivered': delivered,
-               'pending': pending}
+               'pending': pending, 'out_for_delivery':out_for_delivery}
 
     return render(request, 'accounts/dashboard.html', context)
 
