@@ -1,18 +1,24 @@
-{% extends 'accounts/main.html' %}
+{%  extends 'accounts/main.html' %}
 {% load static %}
 {% block content %}
+
+
 <div class="row">
-    <div class="col-md-6">
-        <div class="card card-body">
-            <form method="POST">
-                {% csrf_token %}
-                {{form}}    <!--in context of views.py -->
+	<div class="col-md-6">
+		<div class="card card-body">
 
-                <input class="btn btn-outline-success btn-md" type="submit" name="submit">
-            </form>
-        </div>
-    </div>
+			<form action="" method="POST">
+				{% csrf_token %}
+				{{ form.management_form }}
+				{% for field in form %}
+					{{field}}
+					<hr>
+				{% endfor %}
+
+				<input type="submit" name="Submit">
+			</form>
+
+		</div>
+	</div>
 </div>
-
-{% endblock %}
 
