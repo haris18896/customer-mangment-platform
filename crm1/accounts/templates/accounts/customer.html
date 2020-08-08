@@ -42,7 +42,7 @@
 			<form method="get">
 				{{myFilter.form}}
 
-		    <button class="btn btn-primary" type="submit">Search</button>
+		    <button class="btn btn-outline-primary btn-md" type="submit">Search</button>
 		  </form>
 
 		</div>
@@ -71,9 +71,9 @@
 					<td>{{order.note}}</td>
 					<td>{{order.date_created}}</td>
 					<td>{{order.status}}</td>
-					<td><a class="btn btn-sm btn-info" href="{% url 'update_order' order.id %}">Update</a></td>
+					<td><a class="btn btn-outline-info btn-md" href="{% url 'update_order' order.id %}">Update</a></td>
 
-					<td><a class="btn btn-sm btn-danger" href="{% url 'delete_order' order.id %}">Delete</a></td>
+					<td><a class="btn btn-outline-danger btn-md" href="{% url 'delete_order' order.id %}">Delete</a></td>
 				</tr>
 				{% endfor %}
 
