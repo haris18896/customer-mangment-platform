@@ -15,7 +15,7 @@ from .forms import OrderForm, CreateUserForm
 from .filters import OrderFilter
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
-#making user profile
+
 # Create your views here.
 @unauthenticated_user
 def registerPage(request):
@@ -28,6 +28,10 @@ def registerPage(request):
 
             group = Group.objects.get(name='customer')
             user.groups.add(group)
+            #creating an automatic customer when registering a user
+            Customer.objects.create(
+                user=user,
+            )
 
             messages.success(request, 'Account was created for ' + username)
 
@@ -35,6 +39,7 @@ def registerPage(request):
 
     context = {'form': form}
     return render(request, 'accounts/register.html', context)
+
 
 @unauthenticated_user
 def loginPage(request):
@@ -79,8 +84,19 @@ def home(request):
     return render(request, 'accounts/dashboard.html', context)
 
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['customer'])
 def userPage(request):
-    context = {}
+    orders = request.user.customer.order_set.all()
+    print('Orders', orders)
+
+    total_orders = orders.count()
+    delivered = orders.filter(status='Delivered').count()
+    pending = orders.filter(status='Pending').count()
+    out_for_delivery = orders.filter(status='out for delivery').count()
+
+    context = {'orders': orders, 'total_orders': total_orders, 'delivered': delivered,
+               'pending': pending, 'out_for_delivery': out_for_delivery}
     return render(request, 'accounts/user.html', context)
 
 
