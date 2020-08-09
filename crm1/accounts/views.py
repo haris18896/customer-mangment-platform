@@ -15,7 +15,7 @@ from .forms import OrderForm, CreateUserForm
 from .filters import OrderFilter
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
-
+#creating userImage upload
 # Create your views here.
 @unauthenticated_user
 def registerPage(request):
