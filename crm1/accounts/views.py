@@ -10,13 +10,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 
+# Create your views here.
 from .models import *
-from .forms import OrderForm, CreateUserForm
+from .forms import OrderForm, CreateUserForm, CustomerForm
 from .filters import OrderFilter
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
-#creating userImage upload
-# Create your views here.
+
 @unauthenticated_user
 def registerPage(request):
     form = CreateUserForm()
@@ -28,9 +28,10 @@ def registerPage(request):
 
             group = Group.objects.get(name='customer')
             user.groups.add(group)
-            #creating an automatic customer when registering a user
+            # Added username after video because of error returning customer name if not added
             Customer.objects.create(
                 user=user,
+                name=user.username,
             )
 
             messages.success(request, 'Account was created for ' + username)
@@ -88,16 +89,31 @@ def home(request):
 @allowed_users(allowed_roles=['customer'])
 def userPage(request):
     orders = request.user.customer.order_set.all()
-    print('Orders', orders)
 
     total_orders = orders.count()
     delivered = orders.filter(status='Delivered').count()
     pending = orders.filter(status='Pending').count()
-    out_for_delivery = orders.filter(status='out for delivery').count()
 
-    context = {'orders': orders, 'total_orders': total_orders, 'delivered': delivered,
-               'pending': pending, 'out_for_delivery': out_for_delivery}
+    print('ORDERS:', orders)
+
+    context = {'orders': orders, 'total_orders': total_orders,
+               'delivered': delivered, 'pending': pending}
     return render(request, 'accounts/user.html', context)
+
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['customer'])
+def accountSettings(request):
+    customer = request.user.customer
+    form = CustomerForm(instance=customer)
+
+    if request.method == 'POST':
+        form = CustomerForm(request.POST, request.FILES, instance=customer)
+        if form.is_valid():
+            form.save()
+
+    context = {'form': form}
+    return render(request, 'accounts/account_settings.html', context)
 
 
 @login_required(login_url='login')
@@ -148,8 +164,9 @@ def createOrder(request, pk):
 def updateOrder(request, pk):
     order = Order.objects.get(id=pk)
     form = OrderForm(instance=order)
-
+    print('ORDER:', order)
     if request.method == 'POST':
+
         form = OrderForm(request.POST, instance=order)
         if form.is_valid():
             form.save()
