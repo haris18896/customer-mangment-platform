@@ -16,7 +16,7 @@ from .forms import OrderForm, CreateUserForm, CustomerForm
 from .filters import OrderFilter
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
-#django signals
+
 @unauthenticated_user
 def registerPage(request):
     form = CreateUserForm()
@@ -25,14 +25,6 @@ def registerPage(request):
         if form.is_valid():
             user = form.save()
             username = form.cleaned_data.get('username')
-
-            group = Group.objects.get(name='customer')
-            user.groups.add(group)
-            # Added username after video because of error returning customer name if not added
-            Customer.objects.create(
-                user=user,
-                name=user.username,
-            )
 
             messages.success(request, 'Account was created for ' + username)
 
@@ -76,11 +68,10 @@ def home(request):
     total_orders = orders.count()
     delivered = orders.filter(status='Delivered').count()
     pending = orders.filter(status='Pending').count()
-    out_for_delivery = orders.filter(status='out for delivery').count()
 
     context = {'orders': orders, 'customers': customers,
                'total_orders': total_orders, 'delivered': delivered,
-               'pending': pending, 'out_for_delivery': out_for_delivery}
+               'pending': pending}
 
     return render(request, 'accounts/dashboard.html', context)
 
