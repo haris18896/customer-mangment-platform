@@ -16,7 +16,7 @@ from .forms import OrderForm, CreateUserForm, CustomerForm
 from .filters import OrderFilter
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
-
+#django signals
 @unauthenticated_user
 def registerPage(request):
     form = CreateUserForm()
