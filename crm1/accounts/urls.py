@@ -36,7 +36,7 @@ urlpatterns = [
          auth_views.PasswordResetCompleteView.as_view(template_name="accounts/password_reset_done.html"),
          name="password_reset_complete"),
 ]
-
+#adding pg
 '''
 1 - Submit email form                         //PasswordResetView.as_view()
 2 - Email sent success message                //PasswordResetDoneView.as_view()
